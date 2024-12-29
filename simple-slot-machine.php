@@ -76,7 +76,7 @@ function slot_machine_shortcode()
         <div class="modal-result">
             <span id="modalFace" class="face"></span>
             <p id="modalMessage"></p>
-            <button id="dismissButton" class="dismiss-button">Dismiss</button>
+            <button id="dismissButton" class="dismiss-button">Continue</button>
         </div>
     </div>
     </div>
