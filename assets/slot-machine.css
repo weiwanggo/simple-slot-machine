@@ -3,9 +3,13 @@
   margin: 20px auto;
   max-width: 450px;
   font-family: Arial, sans-serif;
-  background-color: #006dd236;
+  background-color: #006dd280;
   padding: 20px;
   /* background: url('/wp-content/plugins/simple-slot-machine/assets/images/toppalyer.png') no-repeat center/contain; */
+}
+
+#slot-machine .text {
+  color: white;
 }
 
 #reels {

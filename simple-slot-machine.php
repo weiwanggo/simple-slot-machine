@@ -54,14 +54,14 @@ function slot_machine_shortcode()
 
     ob_start(); ?>
     <div id="slot-machine">
-        <h2>幸运转盘 <br />Lucky Spin</h2>
+        <h2 class="text">幸运转盘 <br />Lucky Spin</h2>
         <div id="reels">
             <div class="reel" id="reel1"></div>
             <div class="reel" id="reel2"></div>
             <div class="reel" id="reel3"></div>
         </div>
         <div id="controls">
-            <label for="bet">Bet:</label>
+            <label for="bet" class="text">Bet:</label>
             <select id="bet">
                 <option value="1">1 Point</option>
                 <option value="2">2 Points</option>
@@ -69,7 +69,7 @@ function slot_machine_shortcode()
                 <option value="10">10 Points</option>
             </select>
             <button id="toggleButton">Spin</button>
-            <div id="balance">Balance: <?php echo $balance ?></div>
+            <div id="balance" class="text">Balance: <?php echo $balance ?></div>
         </div>
         <p id="result"></p>
         <div id="resultModal" class="modal">
