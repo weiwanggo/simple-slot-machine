@@ -6,11 +6,11 @@
  * Author: Your Name
  */
 const OUTCOMES = [
-    ["result" => "no_win", "probability" => 49],
+    ["result" => "no_win", "probability" => 30],
     ["result" => "2x", "probability" => 30],
-    ["result" => "5x", "probability" => 15],
-    ["result" => "20x", "probability" => 5],
-    ["result" => "100x", "probability" => 1]
+    ["result" => "5x", "probability" => 25],
+    ["result" => "20x", "probability" => 10],
+    ["result" => "100x", "probability" => 5]
 ];
 
 const HIGH_WIN_OUTCOMES = [
