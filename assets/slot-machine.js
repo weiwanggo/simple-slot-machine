@@ -56,7 +56,11 @@ jQuery(document).ready(function ($) {
         toggleSpin();
     });
     
-    $("#dismissButton").on("click", function () {
+    $("#dismissButton").on("click", function () {   
+        $("#resultModal").css({
+            border: "",
+            background: "",
+        });
         $("#resultModal").fadeOut();
         $("#toggleButton").prop("disabled", false); // Re-enable the button
     });
@@ -146,8 +150,7 @@ jQuery(document).ready(function ($) {
                                     $("#modalFace").html("🥳");
                                     $("#resultModal").css({
                                         border: "4px solid gold",
-                                        background: "linear-gradient(45deg, #ffdd57, #ffb347)",
-                                        color: "black",
+                                        background: "linear-gradient(45deg, #ffdd57, #ffb347)"
                                     }).fadeIn();
 
                                     //$('#toggleButton').prop('disabled', false)
