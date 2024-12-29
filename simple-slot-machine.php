@@ -23,13 +23,14 @@ const HIGH_WIN_OUTCOMES = [
 
 // Define the images and their corresponding multipliers
 const IMAGES = [
-    "image1" => 100,
-    "image2" => 20,
-    "image3" => 20,
-    "image4" => 5,
-    "image5" => 5,
-    "image6" => 5
+    "image1" => [100, "20xbeeAnimation"],
+    "image2" => [20, "1xblueangelAnimation"],
+    "image3" => [20, "10xfireflyAnimation"],
+    "image4" => [5, "1xgardeniafairyAnimation"],
+    "image5" => [5, "1xcopterAnimation"],
+    "image6" => [5, "1xhibiscusangelAnimation"]
 ];
+
 // Enqueue assets
 function slot_machine_enqueue_scripts()
 {
@@ -73,6 +74,7 @@ function slot_machine_shortcode()
         <p id="result"></p>
     </div>
     <div id="jackpot-animation"></div>
+    <script type="module" src="/wp-content/themes/glytch-child/js/surprise-list.js"></script>
     <?php
     return ob_get_clean();
 }
@@ -102,6 +104,11 @@ function slot_machine_spin()
 
     $winningResult = $isHighWin? weighted_random_choice(HIGH_WIN_OUTCOMES) : weighted_random_choice(OUTCOMES);
     $reels = arrange_reels($winningResult, IMAGES);
+    $animation = '';
+    // Check if all elements are the same
+    if (count(array_unique($reels)) === 1) {
+        $animation = IMAGES[$reels[0]][1];
+    }
 
     $winnings = $winningResult !== "no_win" ? $bet * intval($winningResult) : 0;
 
@@ -112,7 +119,7 @@ function slot_machine_spin()
     }
     $balance = mycred_get_users_balance($user_id);
 
-    wp_send_json_success(['reels' => $reels, 'winnings' => $winnings, 'result' => $winningResult, 'balance' => $balance]);
+    wp_send_json_success(['reels' => $reels, 'winnings' => $winnings, 'result' => $winningResult, 'balance' => $balance, 'animation' => $animation]);
 }
 
 // Function to select a weighted random outcome
@@ -153,7 +160,7 @@ function arrange_reels($result, $images)
         // Extract multiplier from result (e.g., "5x" -> 5)
         $winningMultiplier = intval($result);
         $winningImages = array_keys(array_filter($images, function ($value) use ($winningMultiplier) {
-            return $value == $winningMultiplier;
+            return $value[0] == $winningMultiplier;
         }));
         $winningImage = $winningImages[array_rand($winningImages)];
         return [$winningImage, $winningImage, $winningImage];

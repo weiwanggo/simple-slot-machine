@@ -46,7 +46,7 @@ jQuery(document).ready(function ($) {
     $('#reel3').html('<img src="' + symbols[0] + '" alt="Reel 3">');
 
     $('#toggleButton').on('click', function () {
-        if (!isAudioLoaded){
+        if (!isAudioLoaded) {
             winAudio.load();
             loseAudio.load();
             jackportAudio.load();
@@ -138,9 +138,23 @@ jQuery(document).ready(function ($) {
                                     $('#result').removeClass('jackpot-message');
                                     $('#toggleButton').prop('disabled', false)
                                 });
+                                animationRepeatNum = 20;
                             }
                             else {
                                 audio = winAudio;
+                            }
+                            if (response.data.animation != "") {
+                                const [repeatNum, animationName] = response.data.animation.split("x");
+                                const repeatCount = parseInt(repeatNum, 10);
+                                const animationFunction = window[animationName];
+
+                                // Assuming animations are global functions
+
+                                if (typeof animationFunction === "function") {
+                                    for (let i = 0; i < repeatCount; i++) {
+                                        animationFunction(); // Call the function N times
+                                    }
+                                }
                             }
 
                             //audio.play();
