@@ -6,7 +6,7 @@
  * Author: Your Name
  */
 const OUTCOMES = [
-    ["result" => "no_win", "probability" => 30],
+    ["result" => "no_win", "probability" => 49],
     ["result" => "2x", "probability" => 30],
     ["result" => "5x", "probability" => 25],
     ["result" => "20x", "probability" => 10],
@@ -72,16 +72,25 @@ function slot_machine_shortcode()
             <div id="balance">Balance: <?php echo $balance ?></div>
         </div>
         <p id="result"></p>
+        <div id="resultModal" class="modal">
+        <div class="modal-result">
+            <span id="modalFace" class="face"></span>
+            <p id="modalMessage"></p>
+            <button id="dismissButton" class="dismiss-button">Dismiss</button>
+        </div>
+    </div>
     </div>
     <div id="jackpot-animation"></div>
     <script type="module" src="/wp-content/themes/glytch-child/js/surprise-list.js"></script>
+    
     <?php
     return ob_get_clean();
 }
 add_shortcode('slot-machine', 'slot_machine_shortcode');
 
-function isLuckyRole($user){
-    if (in_array('administrator', $user->roles) || in_array('captain', $user->roles)){
+function isLuckyRole($user)
+{
+    if (in_array('administrator', $user->roles) || in_array('captain', $user->roles)) {
         return true;
     }
     return false;
@@ -94,15 +103,15 @@ function slot_machine_spin()
     }
 
     $bet = intval($_POST['bet']);
-    
+
     $user = wp_get_current_user();
     $user_id = $user->ID;
     $isHighWin = false;
-    if (in_array('administrator', $user->roles) || in_array('captain', $user->roles)){
+    if (in_array('administrator', $user->roles) || in_array('captain', $user->roles)) {
         $isHighWin = true;
     }
 
-    $winningResult = $isHighWin? weighted_random_choice(HIGH_WIN_OUTCOMES) : weighted_random_choice(OUTCOMES);
+    $winningResult = $isHighWin ? weighted_random_choice(HIGH_WIN_OUTCOMES) : weighted_random_choice(OUTCOMES);
     $reels = arrange_reels($winningResult, IMAGES);
     $animation = '';
     // Check if all elements are the same

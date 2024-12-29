@@ -30,6 +30,7 @@ jQuery(document).ready(function ($) {
     const jackportAudio = new Audio(baseUrl + 'assets/audio/jackport.mp3');
     const loseAudio = new Audio(baseUrl + 'assets/audio/lose.mp3');
 
+
     let audio = null;
 
     function resetAudio() {
@@ -54,6 +55,11 @@ jQuery(document).ready(function ($) {
         }
         toggleSpin();
     });
+    
+    $("#dismissButton").on("click", function () {
+        $("#resultModal").fadeOut();
+        $("#toggleButton").prop("disabled", false); // Re-enable the button
+    });
 
     // Function to toggle spinning state
     function toggleSpin() {
@@ -77,10 +83,8 @@ jQuery(document).ready(function ($) {
                 if (response.success) {
                     isSpinning = true;
                     $('#result').text('Spinning......');
-                    $('#toggleButton').text('Stop');
+                    $('#toggleButton').prop('disabled', true);
                     $('#balance').html('Balance: ' + response.data.balance);
-
-
                     ['#reel1 img', '#reel2 img', '#reel3 img'].forEach((selector, index) => {
                         audio = spinAudio;
                         audio.play();
@@ -88,7 +92,7 @@ jQuery(document).ready(function ($) {
                             const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
                             $(selector).attr('src', randomSymbol);
                         }, 80); // Change image every 100ms
-                        spinTimeout = setTimeout(stopSpin, 3000);
+                        spinTimeout = setTimeout(stopSpin, 5000);
                     });
                 } else {
                     $('#result').text(response.data.message || 'An error occurred.');
@@ -104,7 +108,8 @@ jQuery(document).ready(function ($) {
         if (isSpinning) {
             isSpinning = false;
             clearTimeout(spinTimeout);
-            $('#toggleButton').text('Spin');
+            //$('#toggleButton').prop('disabled', false)
+            //$('#toggleButton').text('Spin');
             const bet = $('#bet').val();
             $('#result').text('');
 
@@ -120,14 +125,15 @@ jQuery(document).ready(function ($) {
                         resetAudio();
 
                         // Update the reels with the result
-                        $('#reel1 img').attr('src', baseImageUrl + reels[0] + '.png');
-                        $('#reel2 img').attr('src', baseImageUrl + reels[1] + '.png');
-                        $('#reel3 img').attr('src', baseImageUrl + reels[2] + '.png');
+                        $('#reel1 img').attr('src', baseImageUrl + reels[0] + '.png?' + Math.random());
+                        $('#reel2 img').attr('src', baseImageUrl + reels[1] + '.png?' + Math.random());
+                        $('#reel3 img').attr('src', baseImageUrl + reels[2] + '.png?' + Math.random());
                         $('#balance').html('Balance: ' + response.data.balance);
 
                         if (response.data.winnings > 0) {
                             if (response.data.result == '100x') {
                                 audio = jackportAudio;
+                                audio.play();
                                 shootingInterval = setInterval(shootIcon, 100); // Add a new icon every 100ms
                                 $('#result').addClass('jackpot-message');
                                 $('#toggleButton').prop('disabled', true)
@@ -136,12 +142,27 @@ jQuery(document).ready(function ($) {
                                     clearInterval(shootingInterval);
                                     $('#jackpot-animation').empty();
                                     $('#result').removeClass('jackpot-message');
-                                    $('#toggleButton').prop('disabled', false)
+                                    $("#modalMessage").html('<strong>JACKPOT!!! 🎉</strong> You hit the big win!');
+                                    $("#modalFace").html("🥳");
+                                    $("#resultModal").css({
+                                        border: "4px solid gold",
+                                        background: "linear-gradient(45deg, #ffdd57, #ffb347)",
+                                        color: "black",
+                                    }).fadeIn();
+
+                                    //$('#toggleButton').prop('disabled', false)
                                 });
-                                animationRepeatNum = 20;
+                                
                             }
                             else {
                                 audio = winAudio;
+                                $('#result').text('You won ' + response.data.winnings + ' points!');
+                                audio.play();
+                                setTimeout(() => {
+                                    $("#modalMessage").text('You won ' + response.data.winnings + ' points!');
+                                    $("#modalFace").text("😊");
+                                    $("#resultModal").fadeIn();
+                                }, 500);
                             }
                             if (response.data.animation != "") {
                                 const [repeatNum, animationName] = response.data.animation.split("x");
@@ -157,19 +178,20 @@ jQuery(document).ready(function ($) {
                                 }
                             }
 
-                            //audio.play();
-
                             $('#result').text('You won ' + response.data.winnings + ' points!');
+                           
                         }
                         else {
                             audio = loseAudio;
-                            //audio.play();
+                            audio.play();
                             $('#result').text('You lost. Try again!');
-                        }
+                            setTimeout(() => {
+                                $("#modalMessage").text('You lost. Try again!');
+                                $("#modalFace").text("😞");
+                                $("#resultModal").fadeIn();
 
-                        audio.play().catch(function (error) {
-                            console.log('Audio playback failed:', error);
-                        });
+                            }, 500);
+                        }
 
                     } else {
                         $('#result').text(response.data.message || 'An error occurred.');

@@ -151,3 +151,48 @@
     transform: scale(1);
   }
 }
+
+/** modal result */
+/* Modal styling */
+#slot-machine .modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  justify-content: center;
+  align-items: center;
+}
+
+#slot-machine .modal-result {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#slot-machine .face {
+  font-size: 50px;
+  margin-bottom: 20px;
+}
+
+#slot-machine .dismiss-button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #007BFF;
+  color: white;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#slot-machine .dismiss-button:hover {
+  background-color: #0056b3;
+}
+
