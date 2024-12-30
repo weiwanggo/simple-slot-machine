@@ -137,7 +137,7 @@
 .jackpot-message {
   font-size: 24px;
   font-weight: bold;
-  color: gold;
+  color: gold!important;
   opacity: 1;
   transition: font-size 0.3s, opacity 0.5s;
   animation: flash-grow 1s infinite;

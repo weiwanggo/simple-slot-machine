@@ -47,7 +47,7 @@ add_action('wp_enqueue_scripts', 'slot_machine_enqueue_scripts');
 function slot_machine_shortcode()
 {
     if (!is_user_logged_in()) {
-        return '<p>Please log in to use the slot machine.</p>';
+        return '<div id="slot-machine"><h2 class="text">Please log in to play. 请登录。</h2>';
     }
     $user_id = get_current_user_id();
     $balance = mycred_get_users_balance($user_id);
@@ -71,7 +71,7 @@ function slot_machine_shortcode()
             <button id="toggleButton">Spin</button>
             <div id="balance" class="text">Balance: <?php echo $balance ?></div>
         </div>
-        <p id="result"></p>
+        <p id="result" class="text"></p>
         <div id="resultModal" class="modal">
         <div class="modal-result">
             <span id="modalFace" class="face"></span>
