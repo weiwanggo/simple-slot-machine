@@ -77,6 +77,7 @@ jQuery(document).ready(function ($) {
     function startSpin() {
         resetAudio();
         clearInterval(shootingInterval);
+        $('#toggleButton').prop('disabled', true);
         $('#jackpot-animation').empty();
         $('#result').removeClass('jackpot-message');
         const bet = $('#bet').val();
@@ -87,7 +88,7 @@ jQuery(document).ready(function ($) {
                 if (response.success) {
                     isSpinning = true;
                     $('#result').text('Spinning......');
-                    $('#toggleButton').prop('disabled', true);
+                    //$('#toggleButton').prop('disabled', true);
                     $('#balance').html('Balance: ' + response.data.balance);
                     ['#reel1 img', '#reel2 img', '#reel3 img'].forEach((selector, index) => {
                         audio = spinAudio;
@@ -103,11 +104,12 @@ jQuery(document).ready(function ($) {
                         //audio.addEventListener("ended", stopSpin);
                     });
                 } else {
-                    $('#result').text(response.data.message || 'An error occurred.');
+                    showMessage(response.data.message || 'An error occurred.', '😞');
+                    
                 }
             }
         ).fail(() => {
-            $('#result').text('Failed to process your request. Please try again.');
+            showMessage('Failed to process your request. Please try again.', '😞');
             isSpinning = false;
         });
     }
@@ -141,11 +143,11 @@ jQuery(document).ready(function ($) {
                         setTimeout(() => showResult(response), 1000);
 
                     } else {
-                        $('#result').text(response.data.message || 'An error occurred.');
+                        showMessage(response.data.message || 'An error occurred.', '😞');
                     }
                 }
             ).fail(() => {
-                $('#result').text('Failed to process your request. Please try again.');
+                showMessage('Failed to process your request. Please try again.', '😞');
             });
         }
     }
@@ -176,13 +178,8 @@ jQuery(document).ready(function ($) {
             }
             else {
                 audio = winAudio;
-                $('#result').text('You won ' + response.data.winnings + ' points!');
                 audio.play();
-                setTimeout(() => {
-                    $("#modalMessage").text('You won ' + response.data.winnings + ' points!');
-                    $("#modalFace").text("😊");
-                    $("#resultModal").fadeIn();
-                }, 1000);
+                showMessage('You won ' + response.data.winnings + ' points!', "😊");
             }
             if (response.data.animation != "") {
                 const [repeatNum, animationName] = response.data.animation.split("x");
@@ -204,10 +201,7 @@ jQuery(document).ready(function ($) {
         else {
             audio = loseAudio;
             audio.play();
-            $('#result').text('You lost. Try again!');
-            $("#modalMessage").text('You lost. Try again!');
-            $("#modalFace").text("😞");
-            $("#resultModal").fadeIn();
+            showMessage('You lost. Try again!', "😞");
         }
     }
 
@@ -242,6 +236,10 @@ jQuery(document).ready(function ($) {
         }, 1500); // Match animation duration
     };
 
-
-
+    function showMessage(message, icon){
+        $('#result').text(message);
+        $("#modalMessage").text(message);
+        $("#modalFace").text(icon);
+        $("#resultModal").fadeIn();
+    }
 });
