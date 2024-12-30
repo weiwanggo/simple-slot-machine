@@ -55,8 +55,8 @@ jQuery(document).ready(function ($) {
         }
         toggleSpin();
     });
-    
-    $("#dismissButton").on("click", function () {   
+
+    $("#dismissButton").on("click", function () {
         $("#resultModal").css({
             border: "",
             background: "",
@@ -92,15 +92,15 @@ jQuery(document).ready(function ($) {
                     ['#reel1 img', '#reel2 img', '#reel3 img'].forEach((selector, index) => {
                         audio = spinAudio;
                         audio.play();
-                        if (intervals[index]){
+                        if (intervals[index]) {
                             clearInterval(intervals[index]);
                         }
                         intervals[index] = setInterval(() => {
                             const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
                             $(selector).attr('src', randomSymbol);
                         }, 80); // Change image every 100ms
-                        //spinTimeout = setTimeout(stopSpin, 15000);
-                        audio.addEventListener("ended", stopSpin);
+                        spinTimeout = setTimeout(stopSpin, 10000);
+                        //audio.addEventListener("ended", stopSpin);
                     });
                 } else {
                     $('#result').text(response.data.message || 'An error occurred.');
@@ -115,7 +115,7 @@ jQuery(document).ready(function ($) {
     function stopSpin() {
         if (isSpinning) {
             isSpinning = false;
-            //clearTimeout(spinTimeout);
+            clearTimeout(spinTimeout);
             //$('#toggleButton').prop('disabled', false)
             //$('#toggleButton').text('Spin');
             const bet = $('#bet').val();
@@ -138,67 +138,7 @@ jQuery(document).ready(function ($) {
                         $('#reel3 img').attr('src', baseImageUrl + reels[2] + '.png?' + Math.random());
                         $('#balance').html('Balance: ' + response.data.balance);
 
-                        if (response.data.winnings > 0) {
-                            if (response.data.result == '100x') {
-                                audio = jackportAudio;
-                                audio.play();
-                                shootingInterval = setInterval(shootIcon, 100); // Add a new icon every 100ms
-                                $('#result').addClass('jackpot-message');
-                                $('#toggleButton').prop('disabled', true)
-
-                                audio.addEventListener("ended", function () {
-                                    clearInterval(shootingInterval);
-                                    $('#jackpot-animation').empty();
-                                    $('#result').removeClass('jackpot-message');
-                                    $("#modalMessage").html('<strong>JACKPOT!!! 🎉</strong> You hit the big win!');
-                                    $("#modalFace").html("🥳");
-                                    $("#resultModal").css({
-                                        border: "4px solid gold",
-                                        background: "linear-gradient(45deg, #ffdd57, #ffb347)"
-                                    }).fadeIn();
-
-                                    //$('#toggleButton').prop('disabled', false)
-                                });
-                                
-                            }
-                            else {
-                                audio = winAudio;
-                                $('#result').text('You won ' + response.data.winnings + ' points!');
-                                audio.play();
-                                setTimeout(() => {
-                                    $("#modalMessage").text('You won ' + response.data.winnings + ' points!');
-                                    $("#modalFace").text("😊");
-                                    $("#resultModal").fadeIn();
-                                }, 1000);
-                            }
-                            if (response.data.animation != "") {
-                                const [repeatNum, animationName] = response.data.animation.split("x");
-                                const repeatCount = parseInt(repeatNum, 10);
-                                const animationFunction = window[animationName];
-
-                                // Assuming animations are global functions
-
-                                if (typeof animationFunction === "function") {
-                                    for (let i = 0; i < repeatCount; i++) {
-                                        animationFunction(); // Call the function N times
-                                    }
-                                }
-                            }
-
-                            $('#result').text('You won ' + response.data.winnings + ' points!');
-                           
-                        }
-                        else {
-                            audio = loseAudio;
-                            audio.play();
-                            $('#result').text('You lost. Try again!');
-                            setTimeout(() => {
-                                $("#modalMessage").text('You lost. Try again!');
-                                $("#modalFace").text("😞");
-                                $("#resultModal").fadeIn();
-
-                            }, 500);
-                        }
+                        setTimeout(() => showResult(response), 1000);
 
                     } else {
                         $('#result').text(response.data.message || 'An error occurred.');
@@ -207,6 +147,67 @@ jQuery(document).ready(function ($) {
             ).fail(() => {
                 $('#result').text('Failed to process your request. Please try again.');
             });
+        }
+    }
+
+    function showResult(response) {
+        if (response.data.winnings > 0) {
+            if (response.data.result == '100x') {
+                audio = jackportAudio;
+                audio.play();
+                shootingInterval = setInterval(shootIcon, 100); // Add a new icon every 100ms
+                $('#result').addClass('jackpot-message');
+                $('#toggleButton').prop('disabled', true)
+
+                audio.addEventListener("ended", function () {
+                    clearInterval(shootingInterval);
+                    $('#jackpot-animation').empty();
+                    $('#result').removeClass('jackpot-message');
+                    $("#modalMessage").html('<strong>JACKPOT!!! 🎉</strong> You hit the big win!');
+                    $("#modalFace").html("🥳");
+                    $("#resultModal").css({
+                        border: "4px solid gold",
+                        background: "linear-gradient(45deg, #ffdd57, #ffb347)"
+                    }).fadeIn();
+
+                    //$('#toggleButton').prop('disabled', false)
+                });
+
+            }
+            else {
+                audio = winAudio;
+                $('#result').text('You won ' + response.data.winnings + ' points!');
+                audio.play();
+                setTimeout(() => {
+                    $("#modalMessage").text('You won ' + response.data.winnings + ' points!');
+                    $("#modalFace").text("😊");
+                    $("#resultModal").fadeIn();
+                }, 1000);
+            }
+            if (response.data.animation != "") {
+                const [repeatNum, animationName] = response.data.animation.split("x");
+                const repeatCount = parseInt(repeatNum, 10);
+                const animationFunction = window[animationName];
+
+                // Assuming animations are global functions
+
+                if (typeof animationFunction === "function") {
+                    for (let i = 0; i < repeatCount; i++) {
+                        animationFunction(); // Call the function N times
+                    }
+                }
+            }
+
+            $('#result').text('You won ' + response.data.winnings + ' points!');
+
+        }
+        else {
+            audio = loseAudio;
+            audio.play();
+            $('#result').text('You lost. Try again!');
+            $("#modalMessage").text('You lost. Try again!');
+            $("#modalFace").text("😞");
+            $("#resultModal").fadeIn();
         }
     }
 
@@ -240,5 +241,7 @@ jQuery(document).ready(function ($) {
             $(icon).remove(); // Properly remove the specific icon
         }, 1500); // Match animation duration
     };
+
+
 
 });
