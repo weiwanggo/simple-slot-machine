@@ -25,7 +25,7 @@ jQuery(document).ready(function ($) {
 
     // Create audio elements
     const spinAudio = new Audio(baseUrl + 'assets/audio/spin.mp3');
-    spinAudio.loop = true;
+    //spinAudio.loop = true;
     const winAudio = new Audio(baseUrl + 'assets/audio/win.mp3');
     const jackportAudio = new Audio(baseUrl + 'assets/audio/jackport.mp3');
     const loseAudio = new Audio(baseUrl + 'assets/audio/lose.mp3');
@@ -92,11 +92,15 @@ jQuery(document).ready(function ($) {
                     ['#reel1 img', '#reel2 img', '#reel3 img'].forEach((selector, index) => {
                         audio = spinAudio;
                         audio.play();
+                        if (intervals[index]){
+                            clearInterval(intervals[index]);
+                        }
                         intervals[index] = setInterval(() => {
                             const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
                             $(selector).attr('src', randomSymbol);
                         }, 80); // Change image every 100ms
-                        spinTimeout = setTimeout(stopSpin, 5000);
+                        //spinTimeout = setTimeout(stopSpin, 15000);
+                        audio.addEventListener("ended", stopSpin);
                     });
                 } else {
                     $('#result').text(response.data.message || 'An error occurred.');
@@ -111,7 +115,7 @@ jQuery(document).ready(function ($) {
     function stopSpin() {
         if (isSpinning) {
             isSpinning = false;
-            clearTimeout(spinTimeout);
+            //clearTimeout(spinTimeout);
             //$('#toggleButton').prop('disabled', false)
             //$('#toggleButton').text('Spin');
             const bet = $('#bet').val();
@@ -165,7 +169,7 @@ jQuery(document).ready(function ($) {
                                     $("#modalMessage").text('You won ' + response.data.winnings + ' points!');
                                     $("#modalFace").text("😊");
                                     $("#resultModal").fadeIn();
-                                }, 500);
+                                }, 1000);
                             }
                             if (response.data.animation != "") {
                                 const [repeatNum, animationName] = response.data.animation.split("x");
