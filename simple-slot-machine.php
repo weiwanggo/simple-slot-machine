@@ -47,7 +47,10 @@ add_action('wp_enqueue_scripts', 'slot_machine_enqueue_scripts');
 function slot_machine_shortcode()
 {
     if (!is_user_logged_in()) {
-        return '<div id="slot-machine"><h2 class="text">Please log in to play. 请登录。</h2>';
+	$current_url = (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $login_url = wp_login_url($current_url);
+
+        return '<div id="slot-machine"><a href="' . $login_url . '"><h6 class="text">Please log in to play</h6></a>';
     }
     $user_id = get_current_user_id();
     $balance = mycred_get_users_balance($user_id);
