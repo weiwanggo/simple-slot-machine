@@ -31,6 +31,10 @@ const IMAGES = [
     "image6" => [5, "1xhibiscusangelAnimation"]
 ];
 
+const MYCRED_REF_BET = 'Slot Machine Bet';
+const MYCRED_REF_RESULT = 'Slot Machine Result';
+const DAILY_LIMIT = 100;
+
 // Enqueue assets
 function slot_machine_enqueue_scripts()
 {
@@ -53,6 +57,7 @@ function slot_machine_shortcode()
         return '<div id="slot-machine"><a href="' . $login_url . '"><h6 class="text">Please log in to play</h6></a>';
     }
     $user_id = get_current_user_id();
+    $play_count = get_daily_slot_bets($user_id);
     $balance = mycred_get_users_balance($user_id);
 
     ob_start(); ?>
@@ -72,9 +77,10 @@ function slot_machine_shortcode()
                 <option value="10">10 Points</option>
             </select>
             <button id="toggleButton">Spin</button>
-            <div id="balance" class="text">Balance: <?php echo $balance ?></div>
+            <div id="balance" class="text">Your balance: <?php echo $balance ?></div>
         </div>
-        <p id="result" class="text"></p>
+        <p id="remaining-plays" class="text">Today's Play Count: <?php echo ($play_count . '/' . DAILY_LIMIT) ?></p>
+        <p id="result" class="text">Click Spin button to play.  Good Luck!</p>
         <div id="resultModal" class="modal">
         <div class="modal-result">
             <span id="modalFace" class="face"></span>
@@ -127,7 +133,7 @@ function slot_machine_spin()
     // Check if user wins
     if ($winnings > 0) {
         // Add winnings to user's points
-        mycred_add('Slot Machine', $user_id, $winnings, 'Slot machine win');
+        mycred_add(MYCRED_REF_RESULT, $user_id, $winnings, 'Slot machine win');
     }
     $balance = mycred_get_users_balance($user_id);
 
@@ -195,13 +201,21 @@ function start_spin()
     $user = wp_get_current_user();
     $user_id = $user->ID;
 
+    $playCount = get_daily_slot_bets($user_id);
+
+    if ($playCount >= DAILY_LIMIT){
+        wp_send_json_error(['message' => 'You have reached your daily play limit,  please come back tomorrow!']);
+    }
+
     // only admin and captain can play
     if (!in_array('administrator', $user->roles) && !in_array('captain', $user->roles)) {
         wp_send_json_error(['message' => 'You are not allowed to play. Contact Administrator for help.']);
     }
 
+
     // Get user's current balance
     $balance = mycred_get_users_balance($user_id);
+    $playCount++;
 
     // Check if user has enough points
     if ($bet <= 0 || $balance < $bet) {
@@ -209,11 +223,40 @@ function start_spin()
     }
 
     // Subtract the bet from the user's balance
-    mycred_subtract('Slot Machine', $user_id, $bet, 'Slot machine bet');
+    mycred_subtract(MYCRED_REF_BET, $user_id, $bet, 'Slot machine bet');
     $balance = mycred_get_users_balance($user_id);
 
-    wp_send_json_success(['balance' => $balance]);
+    wp_send_json_success(['balance' => $balance, 'playCount' => $playCount . '/' . DAILY_LIMIT]);
 }
+
+function get_daily_slot_bets($user_id) {
+    global $wpdb;
+
+    // Set China timezone
+    $timezone = new DateTimeZone('Asia/Shanghai');
+    $start_of_day = new DateTime('today', $timezone);
+    $end_of_day = new DateTime('tomorrow', $timezone);
+    $end_of_day->modify('-1 second'); // End of the day (23:59:59)
+
+    // Convert to UNIX timestamp
+    $start_timestamp = $start_of_day->getTimestamp();
+    $end_timestamp = $end_of_day->getTimestamp();
+
+    $query = $wpdb->prepare("
+        SELECT COUNT(*) 
+        FROM {$wpdb->prefix}myCRED_log 
+        WHERE user_id = %d 
+        AND ref = %s 
+        AND time BETWEEN %d AND %d
+    ", 
+    $user_id, 
+    MYCRED_REF_BET, // Target only 'bet' entries
+    $start_timestamp, 
+    $end_timestamp);
+
+    return (int) $wpdb->get_var($query);
+}
+
 
 
 add_action('wp_ajax_slot_machine_spin', 'slot_machine_spin');

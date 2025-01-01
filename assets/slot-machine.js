@@ -90,7 +90,8 @@ jQuery(document).ready(function ($) {
                 if (response.success) {
                     isSpinning = true;
                     $('#result').text('Spinning......');
-                    $('#balance').html('Balance: ' + response.data.balance);
+                    $('#balance').html('Your balance: ' + response.data.balance);
+                    $('#remaining-plays').html("Today's Play Count: " + response.data.playCount);
                     ['#reel1 img', '#reel2 img', '#reel3 img'].forEach((selector, index) => {
                         audio = spinAudio;
                         audio.play();
@@ -137,7 +138,7 @@ jQuery(document).ready(function ($) {
                         $('#reel1 img').attr('src', baseImageUrl + reels[0] + '.png');
                         $('#reel2 img').attr('src', baseImageUrl + reels[1] + '.png');
                         $('#reel3 img').attr('src', baseImageUrl + reels[2] + '.png');
-                        $('#balance').html('Balance: ' + response.data.balance);
+                        $('#balance').html('Your balance: ' + response.data.balance);
 
                         setTimeout(() => showResult(response), 1000);
 
