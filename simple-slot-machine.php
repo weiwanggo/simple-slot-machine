@@ -6,19 +6,19 @@
  * Author: Your Name
  */
 const OUTCOMES = [
-    ["result" => "no_win", "probability" => 49],
-    ["result" => "2x", "probability" => 30],
-    ["result" => "5x", "probability" => 25],
-    ["result" => "20x", "probability" => 10],
-    ["result" => "100x", "probability" => 5]
+    ["result" => "no_win", "probability" => 59],
+    ["result" => "2x", "probability" => 33],
+    ["result" => "5x", "probability" => 7],
+    ["result" => "20x", "probability" => 0.9],
+    ["result" => "100x", "probability" => 0.1]
 ];
 
 const HIGH_WIN_OUTCOMES = [
-    ["result" => "no_win", "probability" => 20],
-    ["result" => "2x", "probability" => 20],
-    ["result" => "5x", "probability" => 20],
-    ["result" => "20x", "probability" => 20],
-    ["result" => "100x", "probability" => 20]
+    ["result" => "no_win", "probability" => 59],
+    ["result" => "2x", "probability" => 33],
+    ["result" => "5x", "probability" => 7],
+    ["result" => "20x", "probability" => 0.9],
+    ["result" => "100x", "probability" => 0.1]
 ];
 
 // Define the images and their corresponding multipliers
@@ -191,7 +191,14 @@ function start_spin()
     }
 
     $bet = intval($_POST['bet']);
-    $user_id = get_current_user_id();
+
+    $user = wp_get_current_user();
+    $user_id = $user->ID;
+
+    // only admin and captain can play
+    if (!in_array('administrator', $user->roles) && !in_array('captain', $user->roles)) {
+        wp_send_json_error(['message' => 'You are not allowed to play. Contact Administrator for help.']);
+    }
 
     // Get user's current balance
     $balance = mycred_get_users_balance($user_id);

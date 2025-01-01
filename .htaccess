@@ -1,0 +1,14 @@
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    # Cache images for 1 day
+    ExpiresByType image/png "access plus 1 day"
+    ExpiresByType image/jpeg "access plus 1 day"
+    ExpiresByType image/gif "access plus 1 day"
+    ExpiresByType image/webp "access plus 1 day"
+
+    # Cache audio for 1 day
+    ExpiresByType audio/mpeg "access plus 1 day"
+    ExpiresByType audio/ogg "access plus 1 day"
+    ExpiresByType audio/wav "access plus 1 day"
+</IfModule>

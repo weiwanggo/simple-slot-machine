@@ -63,6 +63,7 @@ jQuery(document).ready(function ($) {
         });
         $("#resultModal").fadeOut();
         $("#toggleButton").prop("disabled", false); // Re-enable the button
+        $("#bet").prop("disabled", false); // Re-enable the button
     });
 
     // Function to toggle spinning state
@@ -78,6 +79,7 @@ jQuery(document).ready(function ($) {
         resetAudio();
         clearInterval(shootingInterval);
         $('#toggleButton').prop('disabled', true);
+        $('#bet').prop('disabled', true);
         $('#jackpot-animation').empty();
         $('#result').removeClass('jackpot-message');
         const bet = $('#bet').val();
@@ -88,7 +90,6 @@ jQuery(document).ready(function ($) {
                 if (response.success) {
                     isSpinning = true;
                     $('#result').text('Spinning......');
-                    //$('#toggleButton').prop('disabled', true);
                     $('#balance').html('Balance: ' + response.data.balance);
                     ['#reel1 img', '#reel2 img', '#reel3 img'].forEach((selector, index) => {
                         audio = spinAudio;
@@ -100,7 +101,7 @@ jQuery(document).ready(function ($) {
                             const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
                             $(selector).attr('src', randomSymbol);
                         }, 80); // Change image every 100ms
-                        spinTimeout = setTimeout(stopSpin, 10000);
+                        spinTimeout = setTimeout(stopSpin, 12000);
                         //audio.addEventListener("ended", stopSpin);
                     });
                 } else {
@@ -118,8 +119,6 @@ jQuery(document).ready(function ($) {
         if (isSpinning) {
             isSpinning = false;
             clearTimeout(spinTimeout);
-            //$('#toggleButton').prop('disabled', false)
-            //$('#toggleButton').text('Spin');
             const bet = $('#bet').val();
             $('#result').text('');
 
@@ -135,9 +134,9 @@ jQuery(document).ready(function ($) {
                         resetAudio();
 
                         // Update the reels with the result
-                        $('#reel1 img').attr('src', baseImageUrl + reels[0] + '.png?' + Math.random());
-                        $('#reel2 img').attr('src', baseImageUrl + reels[1] + '.png?' + Math.random());
-                        $('#reel3 img').attr('src', baseImageUrl + reels[2] + '.png?' + Math.random());
+                        $('#reel1 img').attr('src', baseImageUrl + reels[0] + '.png');
+                        $('#reel2 img').attr('src', baseImageUrl + reels[1] + '.png');
+                        $('#reel3 img').attr('src', baseImageUrl + reels[2] + '.png');
                         $('#balance').html('Balance: ' + response.data.balance);
 
                         setTimeout(() => showResult(response), 1000);
@@ -160,6 +159,7 @@ jQuery(document).ready(function ($) {
                 shootingInterval = setInterval(shootIcon, 100); // Add a new icon every 100ms
                 $('#result').addClass('jackpot-message');
                 $('#toggleButton').prop('disabled', true)
+                $('#bet').prop('disabled', true)
 
                 audio.addEventListener("ended", function () {
                     clearInterval(shootingInterval);
