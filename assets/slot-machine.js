@@ -29,6 +29,7 @@ jQuery(document).ready(function ($) {
     const winAudio = new Audio(baseUrl + 'assets/audio/win.mp3');
     const jackportAudio = new Audio(baseUrl + 'assets/audio/jackport.mp3');
     const loseAudio = new Audio(baseUrl + 'assets/audio/lose.mp3');
+    const delays = [0, 1000, 4000]; 
 
 
     let audio = null;
@@ -121,7 +122,6 @@ jQuery(document).ready(function ($) {
             isSpinning = false;
             clearTimeout(spinTimeout);
             const bet = $('#bet').val();
-            $('#result').text('');
 
             // AJAX request to calculate results
             $.post(
@@ -129,18 +129,21 @@ jQuery(document).ready(function ($) {
                 { action: 'slot_machine_spin', bet: bet },
                 function (response) {
                     if (response.success) {
-                        intervals.forEach(interval => clearInterval(interval));
                         const reels = response.data.reels;
-
+                        //intervals.forEach(interval => clearInterval(interval));
+                        reels.forEach((result, index) => {
+                            setTimeout(() => {
+                                clearInterval(intervals[index]);
+                                $(`#reel${index + 1} img`).attr('src', `${baseImageUrl}${result}.png`);
+                            }, delays[index]);
+                        });
                         resetAudio();
 
                         // Update the reels with the result
-                        $('#reel1 img').attr('src', baseImageUrl + reels[0] + '.png');
-                        $('#reel2 img').attr('src', baseImageUrl + reels[1] + '.png');
-                        $('#reel3 img').attr('src', baseImageUrl + reels[2] + '.png');
+                        
                         $('#balance').html('Your balance: ' + response.data.balance);
 
-                        setTimeout(() => showResult(response), 1000);
+                        setTimeout(() => showResult(response), 5000);
 
                     } else {
                         showMessage(response.data.message || 'An error occurred.', '😞');
