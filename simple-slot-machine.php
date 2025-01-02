@@ -115,7 +115,7 @@ function slot_machine_spin()
 
     $bet = intval($_POST['bet']);
     if (!in_array($bet, BETS)) {
-        wp_send_json_error(['message' => 'Invalide bet ' . $bet]);
+        wp_send_json_error(['message' => 'Invalid bet ' . $bet]);
     }
 
     $user = wp_get_current_user();
@@ -201,7 +201,7 @@ function start_spin()
 
     $bet = intval($_POST['bet']);
     if (!in_array($bet, BETS)) {
-        wp_send_json_error(['message' => 'Invalide bet ' . $bet]);
+        wp_send_json_error(['message' => 'Invalid bet ' . $bet]);
     }
 
     $user = wp_get_current_user();
