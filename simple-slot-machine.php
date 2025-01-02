@@ -35,6 +35,8 @@ const MYCRED_REF_BET = 'Slot Machine Bet';
 const MYCRED_REF_RESULT = 'Slot Machine Result';
 const DAILY_LIMIT = 100;
 
+const BETS = [1, 2, 5, 10];
+
 // Enqueue assets
 function slot_machine_enqueue_scripts()
 {
@@ -112,6 +114,9 @@ function slot_machine_spin()
     }
 
     $bet = intval($_POST['bet']);
+    if (!in_array($bet, BETS)) {
+        wp_send_json_error(['message' => 'Invalide bet ' . $bet]);
+    }
 
     $user = wp_get_current_user();
     $user_id = $user->ID;
@@ -144,9 +149,7 @@ function slot_machine_spin()
 function weighted_random_choice($outcomes)
 {
     $totalWeight = array_sum(array_column($outcomes, 'probability'));
-    $randVal = mt_rand(0, $totalWeight * 100) / 100; // Generate random number in [0, totalWeight]
-    // Uncomment below for testing
-    //   $randVal =100;     
+    $randVal = mt_rand(0, $totalWeight * 100) / 100; // Generate random number in [0, totalWeight] 
     $cumulativeWeight = 0;
 
     foreach ($outcomes as $outcome) {
@@ -197,6 +200,9 @@ function start_spin()
     }
 
     $bet = intval($_POST['bet']);
+    if (!in_array($bet, BETS)) {
+        wp_send_json_error(['message' => 'Invalide bet ' . $bet]);
+    }
 
     $user = wp_get_current_user();
     $user_id = $user->ID;
