@@ -21,6 +21,7 @@ const HIGH_WIN_OUTCOMES = [
     ["result" => "100x", "probability" => 0.1]
 ];
 
+
 // Define the images and their corresponding multipliers
 const IMAGES = [
     "image1" => [100, "20xbeeAnimation"],
@@ -50,7 +51,7 @@ function slot_machine_enqueue_scripts()
 add_action('wp_enqueue_scripts', 'slot_machine_enqueue_scripts');
 
 // Shortcode for slot machine
-function slot_machine_shortcode()
+function slot_machine_shortcode($atts)
 {
     if (!is_user_logged_in()) {
         $current_url = (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -58,12 +59,23 @@ function slot_machine_shortcode()
 
         return '<div id="slot-machine"><a href="' . $login_url . '"><h6 class="text">Please log in to play</h6></a>';
     }
+
+    $atts = shortcode_atts(
+        array(
+            'theme' => '',
+        ),
+        $atts,
+        'slot-machine'
+    );
+
+    $theme = esc_attr($atts['theme']);
+
     $user_id = get_current_user_id();
     $play_count = get_daily_slot_bets($user_id);
     $balance = mycred_get_users_balance($user_id);
 
     ob_start(); ?>
-    <div id="slot-machine-container">
+    <div id="slot-machine-container" data-theme="<?php echo $theme; ?>">
         <div id="slot-machine">
             <h2 class="text">幸运转盘 <br />Lucky Spin</h2>
             <div id="reels">

@@ -7,13 +7,14 @@ jQuery(document).ready(function ($) {
 
     const baseUrl = '/wp-content/plugins/simple-slot-machine/';
     const baseImageUrl = baseUrl + 'assets/images/';
+    const theme = $('#slot-machine-container').attr('data-theme') || '';
     const symbols = [
-        baseUrl + 'assets/images/image1.png',
-        baseUrl + 'assets/images/image2.png',
-        baseUrl + 'assets/images/image3.png',
-        baseUrl + 'assets/images/image4.png',
-        baseUrl + 'assets/images/image5.png',
-        baseUrl + 'assets/images/image6.png'
+        baseUrl + `assets/images/image1${theme}.png`,
+        baseUrl + `assets/images/image2${theme}.png`,
+        baseUrl + `assets/images/image3${theme}.png`,
+        baseUrl + `assets/images/image4${theme}.png`,
+        baseUrl + `assets/images/image5${theme}.png`,
+        baseUrl + `assets/images/image6${theme}.png`
     ];
 
     const bonus = [
@@ -134,7 +135,7 @@ jQuery(document).ready(function ($) {
                         reels.forEach((result, index) => {
                             setTimeout(() => {
                                 clearInterval(intervals[index]);
-                                $(`#reel${index + 1} img`).attr('src', `${baseImageUrl}${result}.png`);
+                                $(`#reel${index + 1} img`).attr('src', `${baseImageUrl}${result}${theme}.png`);
                             }, delays[index]);
                         });
                         resetAudio();
