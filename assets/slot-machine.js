@@ -25,11 +25,11 @@ jQuery(document).ready(function ($) {
     ];
 
     // Create audio elements
-    const spinAudio = new Audio(baseUrl + 'assets/audio/spin.mp3');
+    const spinAudio = new Audio(baseUrl + `assets/audio/spin${theme}.mp3`);
     //spinAudio.loop = true;
-    const winAudio = new Audio(baseUrl + 'assets/audio/win.mp3');
-    const jackportAudio = new Audio(baseUrl + 'assets/audio/jackport.mp3');
-    const loseAudio = new Audio(baseUrl + 'assets/audio/lose.mp3');
+    const winAudio = new Audio(baseUrl + `assets/audio/win${theme}.mp3`);
+    const jackportAudio = new Audio(baseUrl + `assets/audio/jackport${theme}.mp3`);
+    const loseAudio = new Audio(baseUrl + `assets/audio/lose${theme}.mp3`);
     const delays = [0, 1000, 2500]; 
 
 
