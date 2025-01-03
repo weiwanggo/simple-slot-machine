@@ -186,19 +186,6 @@ jQuery(document).ready(function ($) {
                 audio.play();
                 showMessage('You won ' + response.data.winnings + ' points!', "😊");
             }
-            if (response.data.animation != "") {
-                const [repeatNum, animationName] = response.data.animation.split("x");
-                const repeatCount = parseInt(repeatNum, 10);
-                const animationFunction = window[animationName];
-
-                // Assuming animations are global functions
-
-                if (typeof animationFunction === "function") {
-                    for (let i = 0; i < repeatCount; i++) {
-                        animationFunction(); // Call the function N times
-                    }
-                }
-            }
 
             $('#result').text('You won ' + response.data.winnings + ' points!');
 
