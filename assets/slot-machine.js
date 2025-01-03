@@ -29,7 +29,7 @@ jQuery(document).ready(function ($) {
     const winAudio = new Audio(baseUrl + 'assets/audio/win.mp3');
     const jackportAudio = new Audio(baseUrl + 'assets/audio/jackport.mp3');
     const loseAudio = new Audio(baseUrl + 'assets/audio/lose.mp3');
-    const delays = [0, 1000, 4000]; 
+    const delays = [0, 1000, 2500]; 
 
 
     let audio = null;
@@ -92,7 +92,7 @@ jQuery(document).ready(function ($) {
                     isSpinning = true;
                     $('#result').text('Spinning......');
                     $('#balance').html('Your balance: ' + response.data.balance);
-                    $('#remaining-plays').html("Today's Play Count: " + response.data.playCount);
+                    $('#play-count').html(response.data.playCount);
                     ['#reel1 img', '#reel2 img', '#reel3 img'].forEach((selector, index) => {
                         audio = spinAudio;
                         audio.play();
@@ -143,7 +143,7 @@ jQuery(document).ready(function ($) {
                         
                         $('#balance').html('Your balance: ' + response.data.balance);
 
-                        setTimeout(() => showResult(response), 5000);
+                        setTimeout(() => showResult(response), 3500);
 
                     } else {
                         showMessage(response.data.message || 'An error occurred.', '😞');

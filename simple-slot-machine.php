@@ -53,7 +53,7 @@ add_action('wp_enqueue_scripts', 'slot_machine_enqueue_scripts');
 function slot_machine_shortcode()
 {
     if (!is_user_logged_in()) {
-	$current_url = (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $current_url = (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         $login_url = wp_login_url($current_url);
 
         return '<div id="slot-machine"><a href="' . $login_url . '"><h6 class="text">Please log in to play</h6></a>';
@@ -63,37 +63,42 @@ function slot_machine_shortcode()
     $balance = mycred_get_users_balance($user_id);
 
     ob_start(); ?>
-    <div id="slot-machine">
-        <h2 class="text">幸运转盘 <br />Lucky Spin</h2>
-        <div id="reels">
-            <div class="reel" id="reel1"></div>
-            <div class="reel" id="reel2"></div>
-            <div class="reel" id="reel3"></div>
+    <div id="slot-machine-container">
+        <div id="slot-machine">
+            <h2 class="text">幸运转盘 <br />Lucky Spin</h2>
+            <div id="reels">
+                <div class="reel" id="reel1"></div>
+                <div class="reel" id="reel2"></div>
+                <div class="reel" id="reel3"></div>
+            </div>
+            <div id="controls">
+                <label for="bet" class="text">Bet:</label>
+                <select id="bet">
+                    <option value="1">1 Point</option>
+                    <option value="2">2 Points</option>
+                    <option value="5">5 Points</option>
+                    <option value="10">10 Points</option>
+                </select>
+                <button id="toggleButton">Spin</button>
+
+            </div>
+            <div class="slot-info">
+                <div class="balance text">Balance: <span id="balance"><?php echo $balance ?></span></div>
+                <div class="award text">Today's Play Count: <span id="play-count"><?php echo $play_count . '/' . DAILY_LIMIT; ?></span></div>
+                <div class="status text" id="result">Click Spin button to play. Good Luck!</div>
+            </div>
+            <div id="resultModal" class="modal">
+                <div class="modal-result">
+                    <span id="modalFace" class="face"></span>
+                    <p id="modalMessage"></p>
+                    <button id="dismissButton" class="dismiss-button">Continue</button>
+                </div>
+            </div>
         </div>
-        <div id="controls">
-            <label for="bet" class="text">Bet:</label>
-            <select id="bet">
-                <option value="1">1 Point</option>
-                <option value="2">2 Points</option>
-                <option value="5">5 Points</option>
-                <option value="10">10 Points</option>
-            </select>
-            <button id="toggleButton">Spin</button>
-            <div id="balance" class="text">Your balance: <?php echo $balance ?></div>
-        </div>
-        <p id="remaining-plays" class="text">Today's Play Count: <?php echo ($play_count . '/' . DAILY_LIMIT) ?></p>
-        <p id="result" class="text">Click Spin button to play.  Good Luck!</p>
-        <div id="resultModal" class="modal">
-        <div class="modal-result">
-            <span id="modalFace" class="face"></span>
-            <p id="modalMessage"></p>
-            <button id="dismissButton" class="dismiss-button">Continue</button>
-        </div>
+        <div id="jackpot-animation"></div>
     </div>
-    </div>
-    <div id="jackpot-animation"></div>
     <script type="module" src="/wp-content/themes/glytch-child/js/surprise-list.js"></script>
-    
+
     <?php
     return ob_get_clean();
 }
@@ -209,7 +214,7 @@ function start_spin()
 
     $playCount = get_daily_slot_bets($user_id);
 
-    if ($playCount >= DAILY_LIMIT){
+    if ($playCount >= DAILY_LIMIT) {
         wp_send_json_error(['message' => 'You have reached your daily play limit,  please come back tomorrow!']);
     }
 
@@ -235,7 +240,8 @@ function start_spin()
     wp_send_json_success(['balance' => $balance, 'playCount' => $playCount . '/' . DAILY_LIMIT]);
 }
 
-function get_daily_slot_bets($user_id) {
+function get_daily_slot_bets($user_id)
+{
     global $wpdb;
 
     // Set China timezone
@@ -248,17 +254,19 @@ function get_daily_slot_bets($user_id) {
     $start_timestamp = $start_of_day->getTimestamp();
     $end_timestamp = $end_of_day->getTimestamp();
 
-    $query = $wpdb->prepare("
+    $query = $wpdb->prepare(
+        "
         SELECT COUNT(*) 
         FROM {$wpdb->prefix}myCRED_log 
         WHERE user_id = %d 
         AND ref = %s 
         AND time BETWEEN %d AND %d
-    ", 
-    $user_id, 
-    MYCRED_REF_BET, // Target only 'bet' entries
-    $start_timestamp, 
-    $end_timestamp);
+    ",
+        $user_id,
+        MYCRED_REF_BET, // Target only 'bet' entries
+        $start_timestamp,
+        $end_timestamp
+    );
 
     return (int) $wpdb->get_var($query);
 }
