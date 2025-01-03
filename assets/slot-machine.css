@@ -5,6 +5,13 @@
   background-size: contain;
 }
 
+@media (max-width: 768px) {
+  #slot-machine-container {
+    background: url('/wp-content/plugins/simple-slot-machine/assets/images/holiday-background.png') no-repeat center top;
+    background-size: cover;
+  }
+}
+
 #slot-machine {
   text-align: center;
   margin: 20px auto;
