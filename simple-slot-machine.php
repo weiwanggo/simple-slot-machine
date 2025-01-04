@@ -267,8 +267,7 @@ function get_daily_slot_bets($user_id)
     ",
         $user_id,
         MYCRED_REF_BET, // Target only 'bet' entries
-        $start_timestamp,
-        $end_timestamp
+        $start_timestamp
     );
 
     $result =  (int) $wpdb->get_var($query);
