@@ -14,11 +14,11 @@ const OUTCOMES = [
 ];
 
 const HIGH_WIN_OUTCOMES = [
-    ["result" => "no_win", "probability" => 59],
-    ["result" => "2x", "probability" => 33],
-    ["result" => "5x", "probability" => 7],
-    ["result" => "20x", "probability" => 0.9],
-    ["result" => "100x", "probability" => 0.1]
+    ["result" => "no_win", "probability" => 35],
+    ["result" => "2x", "probability" => 30],
+    ["result" => "5x", "probability" => 20],
+    ["result" => "20x", "probability" => 10],
+    ["result" => "100x", "probability" => 5]
 ];
 
 
@@ -191,8 +191,8 @@ function arrange_reels($result, $images)
     } else {
         // Extract multiplier from result (e.g., "5x" -> 5)
         $winningMultiplier = intval($result);
-        $winningImages = array_keys(array_filter($images, function ($value) use ($winningMultiplier) {
-            return $value == $winningMultiplier;
+	$winningImages = array_keys(array_filter(IMAGES, function ($multipliers) use ($winningMultiplier) {
+            return in_array($winningMultiplier, $multipliers);
         }));
         $winningImage = $winningImages[array_rand($winningImages)];
         return [$winningImage, $winningImage, $winningImage];
@@ -253,12 +253,9 @@ function get_daily_slot_bets($user_id)
     // Set China timezone
     $timezone = new DateTimeZone('Asia/Shanghai');
     $start_of_day = new DateTime('today', $timezone);
-    $end_of_day = new DateTime('tomorrow', $timezone);
-    $end_of_day->modify('-1 second'); // End of the day (23:59:59)
 
     // Convert to UNIX timestamp
     $start_timestamp = $start_of_day->getTimestamp();
-    $end_timestamp = $end_of_day->getTimestamp();
 
     $query = $wpdb->prepare(
         "
@@ -266,7 +263,7 @@ function get_daily_slot_bets($user_id)
         FROM {$wpdb->prefix}myCRED_log 
         WHERE user_id = %d 
         AND ref = %s 
-        AND time BETWEEN %d AND %d
+        AND time >= %d 
     ",
         $user_id,
         MYCRED_REF_BET, // Target only 'bet' entries
@@ -274,7 +271,11 @@ function get_daily_slot_bets($user_id)
         $end_timestamp
     );
 
-    return (int) $wpdb->get_var($query);
+    $result =  (int) $wpdb->get_var($query);
+
+    error_log('Query daily count ' . MYCRED_REF_BET . ' :(' . $user_id . ',' . $start_timestamp . ') Result: ' . $result);
+
+    return $result;
 }
 
 
