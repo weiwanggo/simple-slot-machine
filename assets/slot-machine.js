@@ -26,7 +26,7 @@ jQuery(document).ready(function ($) {
 
     // Create audio elements
     const spinAudio = new Audio(baseUrl + `assets/audio/spin${theme}.mp3`);
-    //spinAudio.loop = true;
+    spinAudio.loop = true;
     const winAudio = new Audio(baseUrl + `assets/audio/win${theme}.mp3`);
     const jackportAudio = new Audio(baseUrl + `assets/audio/jackport${theme}.mp3`);
     const loseAudio = new Audio(baseUrl + `assets/audio/lose${theme}.mp3`);

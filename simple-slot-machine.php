@@ -38,8 +38,8 @@ const DAILY_LIMIT = 100;
 
 const BETS = [1, 2, 5, 10];
 
-// Enqueue assets
-function slot_machine_enqueue_scripts()
+// Shortcode for slot machine
+function slot_machine_shortcode($atts)
 {
     wp_enqueue_script('slot-machine-js', plugins_url('assets/slot-machine.js', __FILE__), array('jquery'), '1.0', true);
     wp_enqueue_style('slot-machine-css', plugins_url('assets/slot-machine.css', __FILE__));
@@ -47,17 +47,11 @@ function slot_machine_enqueue_scripts()
         'ajaxUrl' => admin_url('admin-ajax.php')
     ));
 
-}
-add_action('wp_enqueue_scripts', 'slot_machine_enqueue_scripts');
-
-// Shortcode for slot machine
-function slot_machine_shortcode($atts)
-{
     if (!is_user_logged_in()) {
         $current_url = (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         $login_url = wp_login_url($current_url);
 
-        return '<div id="slot-machine"><a href="' . $login_url . '"><h6 class="text">Please log in to play</h6></a>';
+        return ' <div id="slot-machine-container" style="display: flex;justify-content: center; align-items: center;"><a href="' . $login_url . '"><h6 class="text" style="margin-top:50px;">Please log in to play</h6></a></div>';
     }
 
     $atts = shortcode_atts(
