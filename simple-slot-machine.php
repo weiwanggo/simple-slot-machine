@@ -34,7 +34,7 @@ const IMAGES = [
 
 const MYCRED_REF_BET = 'Slot Machine Bet';
 const MYCRED_REF_RESULT = 'Slot Machine Result';
-const DAILY_LIMIT = 100;
+const DAILY_LIMIT = 50;
 
 const BETS = [1, 2, 5, 10];
 
@@ -52,6 +52,13 @@ function slot_machine_shortcode($atts)
         $login_url = wp_login_url($current_url);
 
         return ' <div id="slot-machine-container" style="display: flex;justify-content: center; align-items: center;"><a href="' . $login_url . '"><h6 class="text" style="margin-top:50px;">Please log in to play</h6></a></div>';
+    }
+
+    $user = wp_get_current_user();
+
+    // only admin and captain can play
+    if (!in_array('administrator', $user->roles) && !in_array('captain', $user->roles)) {
+        return '<div id="slot-machine-container" style="display: flex;justify-content: center; align-items: center;"><h6 class="text" style="margin-top:50px;">Sorry, the lucky spin is not open yet. Please try again later. </h6></div>';
     }
 
     $atts = shortcode_atts(
